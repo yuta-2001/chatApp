@@ -20,3 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/test', [TestController::class, 'test'])->name('test');
+
+Route::get('/books', function () {
+    return [
+        'book1', 'book2', 'book3'
+    ];
+});
