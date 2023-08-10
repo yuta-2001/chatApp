@@ -17,22 +17,30 @@ class AuthController extends Controller
      *   path="/api/register",
      *   summary="ユーザー登録",
      *   @OA\RequestBody(
-     *     @OA\JsonContent(
-     *       @OA\Property(
-     *         property="name",
-     *         type="string",
-     *         example="test"
-     *       ),
-     *       @OA\Property(
-     *         property="email",
-     *         type="string",
-     *         example="test@test.com",
-     *       ),
-     *       @OA\Property(
-     *         property="password",
-     *         type="string",
-     *         example="11111111",
-     *       ),
+     *     @OA\MediaType(
+     *       mediaType="multipart/form-data",
+     *       @OA\Schema(
+     *         type="object",
+     *         @OA\Property(
+     *           property="icon",
+     *           type="file",
+     *         ),
+     *         @OA\Property(
+     *           property="name",
+     *           type="string",
+     *           example="test"
+     *         ),
+     *         @OA\Property(
+     *           property="email",
+     *           type="string",
+     *           example="test@test.com",
+     *         ),
+     *         @OA\Property(
+     *           property="password",
+     *           type="string",
+     *           example="11111111",
+     *         ),
+     *       )
      *     )
      *  ),
      *  @OA\Response(
@@ -43,7 +51,7 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request, RegisterAction $action): void
     {
-        $action($request->input('name'), $request->input('email'), $request->input('password'));
+        $action($request->file('icon'), $request->input('name'), $request->input('email'), $request->input('password'));
     }
 
     /**

@@ -1,6 +1,6 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import axios from '../../../libs/axios'
 import { createAuthorizationHeader } from '../../../utils/handle-authorization-header'
 import FormBtn from './FormBtn'
@@ -33,12 +33,12 @@ export default function AuthForm({ isRegister }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (isRegister) {
-      const res = await axios.post('/api/register', { 
-        'icon' : icon,
-        'name' : name,
-        'email' : email,
-        'password' : password
-      })
+      const formData = new FormData();
+      formData.append('icon', icon);
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('password', password);
+      const res = await axios.post('/api/register', formData)
       if (res.status === 200) {
         router.push('/login')
       } else if (res.status === 419) {
