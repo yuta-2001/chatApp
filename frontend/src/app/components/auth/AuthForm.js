@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useCallback } from 'react'
 import axios from '../../../libs/axios'
-import createCsrfCookie from '../../../utils/create-cookie'
+import { createAuthorizationHeader } from '../../../utils/handle-authorization-header'
 import FormBtn from './FormBtn'
 import FormInput from './FromInput'
 
@@ -11,10 +11,6 @@ export default function AuthForm({ isRegister }) {
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const router = useRouter()
-
-  useEffect(() => {
-    createCsrfCookie()
-  }, [])
 
   const handleNameChange = useCallback((e) => {
     setName(e.target.value)
@@ -49,6 +45,7 @@ export default function AuthForm({ isRegister }) {
         'password' : password
       })
       if (res.status === 200) {
+        createAuthorizationHeader(res.data.token_type, res.data.access_token)
         router.push('/')
       } else if (res.status === 419) {
         createCsrfCookie()
