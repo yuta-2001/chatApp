@@ -1,6 +1,23 @@
+'use client'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import axios from '../libs/axios'
+import { deleteAuthorizationHeader } from '../utils/handle-authorization-header'
 
 export default function Home() {
+  const router = useRouter()
+  const handleLogOut = async (e) => {
+    e.preventDefault()
+    const res = await axios.post('/api/logout')
+    if (res.status === 200) {
+      deleteAuthorizationHeader()
+      router.push('/login')
+    } else {
+      console.log(res)
+      alert('Logout failed')
+    }
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
@@ -23,6 +40,7 @@ export default function Home() {
               width={100}
               height={24}
               priority
+              onClick={handleLogOut}
             />
           </a>
         </div>
