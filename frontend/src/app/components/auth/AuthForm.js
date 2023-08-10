@@ -5,12 +5,18 @@ import axios from '../../../libs/axios'
 import { createAuthorizationHeader } from '../../../utils/handle-authorization-header'
 import FormBtn from './FormBtn'
 import FormInput from './FromInput'
+import FormImage from '../Image/FormImage'
 
 export default function AuthForm({ isRegister }) {
+  const [icon, setIcon] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const router = useRouter()
+
+  const handleChangeIcon = useCallback((nextIcon) => {
+    setIcon(nextIcon);
+},[]);
 
   const handleNameChange = useCallback((e) => {
     setName(e.target.value)
@@ -28,6 +34,7 @@ export default function AuthForm({ isRegister }) {
     e.preventDefault()
     if (isRegister) {
       const res = await axios.post('/api/register', { 
+        'icon' : icon,
         'name' : name,
         'email' : email,
         'password' : password
@@ -59,7 +66,10 @@ export default function AuthForm({ isRegister }) {
     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <form className="space-y-6" onSubmit={handleSubmit}>
         {isRegister && (
-          <FormInput fieldName='name' type='text' value={name} onChange={handleNameChange} required />
+          <>
+            <FormImage icon={icon} handleChangeIcon={handleChangeIcon} />
+            <FormInput fieldName='name' type='text' value={name} onChange={handleNameChange} required />
+          </>
         )}
         <FormInput fieldName='email' type='email' value={email} onChange={handleEmailChange} required />
         <FormInput fieldName='password' type='password' value={password} onChange={handlePasswordChange} required />
