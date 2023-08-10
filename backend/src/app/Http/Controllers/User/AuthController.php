@@ -5,44 +5,106 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\LoginRequest;
 use App\Http\Requests\User\RegisterRequest;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Auth;
-use Hash;
+use App\UseCases\Auth\LoginAction;
+use App\UseCases\Auth\LogoutAction;
+use App\UseCases\Auth\RegisterAction;
 
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request)
+    /**
+     * @OA\POST(
+     *   tags={"Auth"},
+     *   path="/api/register",
+     *   summary="ユーザー登録",
+     *   @OA\RequestBody(
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="name",
+     *         type="string",
+     *         example="test"
+     *       ),
+     *       @OA\Property(
+     *         property="email",
+     *         type="string",
+     *         example="test@test.com",
+     *       ),
+     *       @OA\Property(
+     *         property="password",
+     *         type="string",
+     *         example="11111111",
+     *       ),
+     *     )
+     *  ),
+     *  @OA\Response(
+     *    response=200,
+     *    description="OK",
+     *  )
+     * )
+     */
+    public function register(RegisterRequest $request, RegisterAction $action): void
     {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            $request->session()->regenerate();
-            return response()->json(Auth::user(), 200);
-        }
-
-        return response()->json([
-            "message" => "Invalid credentials"
-        ], 401);
+        $action($request->input('name'), $request->input('email'), $request->input('password'));
     }
 
-    public function logout(Request $request)
+    /**
+     * @OA\POST(
+     *   tags={"Auth"},
+     *   path="/api/login",
+     *   summary="ログイン",
+     *   @OA\RequestBody(
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="email",
+     *         type="string",
+     *         example="test@test.com"
+     *       ),
+     *       @OA\Property(
+     *         property="password",
+     *         type="string",
+     *         example="11111111"
+     *       ),
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(
+     *       type="object",
+     *       @OA\Property(
+     *         property="access_token",
+     *         type="string",
+     *         example="8c7f7485cf762007514768516686bc45e168fe11f672f0093c3b5e1c29a4a5f6"
+     *       ),
+     *       @OA\Property(
+     *         property="token_type",
+     *         type="string",
+     *         example="Bearer"
+     *       ),
+     *     )
+     *   )
+     * )
+     */
+    public function login(LoginRequest $request, LoginAction $action): \Illuminate\Http\JsonResponse
     {
-        Auth::logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return response()->json(true);
+        return $action($request->input('email'), $request->input('password'));
     }
 
-    public function register(RegisterRequest $request)
+    /**
+     * @OA\POST(
+     *   tags={"Auth"},
+     *   path="/api/logout",
+     *   summary="ログアウト",
+     *   security={
+     *     {"bearerAuth": {}}
+     *   },
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK"
+     *   ),    
+     * )
+     */
+    public function logout(LogoutAction $action): void
     {
-        $user = User::create([
-            "name" => $request->name,
-            "email" => $request->email,
-            "password" => Hash::make($request->password),
-        ]);
-
-        Auth::login($user);
-        return response()->json($user, 200);
+        $action();
     }
 }
