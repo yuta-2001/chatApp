@@ -1,11 +1,21 @@
-import axios from '../libs/axios'
-
-const createAuthorizationHeader = (tokenType, accessToken) => {
-    axios.defaults.headers['Authorization'] = tokenType + ' ' + accessToken;
+const setTokenToLocalStorage = (tokenType, accessToken) => {
+    localStorage.setItem('tokenType', tokenType);
+    localStorage.setItem('accessToken', accessToken);
 }
 
-const deleteAuthorizationHeader = () => {
-    delete axios.defaults.headers['Authorization']
+const getAuthorizationHeader = () => {
+    const tokenType = localStorage.getItem('tokenType');
+    const accessToken = localStorage.getItem('accessToken');
+    
+    if (tokenType && accessToken) {
+        return tokenType + ' ' + accessToken;
+    }
+    return null;
 }
 
-export { createAuthorizationHeader, deleteAuthorizationHeader }
+const removeTokenFromLocalStorage = () => {
+    localStorage.removeItem('tokenType');
+    localStorage.removeItem('accessToken');
+}
+
+export { setTokenToLocalStorage, getAuthorizationHeader, removeTokenFromLocalStorage }

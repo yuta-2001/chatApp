@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\File;
 
 class UserResource extends JsonResource
 {
+    public static $wrap = null;
+
     /**
      * Transform the resource into an array.
      *

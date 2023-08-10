@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import axios from '../libs/axios'
-import { deleteAuthorizationHeader } from '../utils/handle-authorization-header'
+import { removeTokenFromLocalStorage } from '../utils/handle-authorization-header'
 
 export default function Home() {
   const router = useRouter()
@@ -10,7 +10,7 @@ export default function Home() {
     e.preventDefault()
     const res = await axios.post('/api/logout')
     if (res.status === 200) {
-      deleteAuthorizationHeader()
+      removeTokenFromLocalStorage()
       router.push('/login')
     } else {
       console.log(res)

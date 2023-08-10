@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation'
 import { useState, useCallback } from 'react'
 import axios from '../../../libs/axios'
-import { createAuthorizationHeader } from '../../../utils/handle-authorization-header'
+import { setTokenToLocalStorage } from '../../../utils/handle-authorization-header'
 import FormBtn from './FormBtn'
 import FormInput from './FromInput'
 import FormImage from '../Image/FormImage'
@@ -52,7 +52,7 @@ export default function AuthForm({ isRegister }) {
         'password' : password
       })
       if (res.status === 200) {
-        createAuthorizationHeader(res.data.token_type, res.data.access_token)
+        setTokenToLocalStorage(res.data.token_type, res.data.access_token)
         router.push('/dashboard/setting')
       } else if (res.status === 419) {
         createCsrfCookie()
