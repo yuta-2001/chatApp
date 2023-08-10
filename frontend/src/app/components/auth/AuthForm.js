@@ -53,7 +53,7 @@ export default function AuthForm({ isRegister }) {
       })
       if (res.status === 200) {
         setTokenToLocalStorage(res.data.token_type, res.data.access_token)
-        router.push('/dashboard/setting')
+        router.push('/dashboard')
       } else if (res.status === 419) {
         createCsrfCookie()
       } else {
