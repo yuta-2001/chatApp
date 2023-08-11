@@ -4,7 +4,9 @@ namespace App\Http\Controllers\User;
 
 use App\Helpers\AuthHelper;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\UpdateRequest;
 use App\Http\Resources\UserResource;
+use App\UseCases\User\UpdateAction;
 
 class UserController extends Controller
 {
@@ -19,27 +21,66 @@ class UserController extends Controller
      *   @OA\Response(
      *     response=200,
      *     description="OK",
-     *     @OA\JsonContent(
-     *       @OA\Property(
-     *         property="data",
-     *         type="object",
-     *         @OA\Property(
-     *           property="icon",
-     *           type="string",
-     *           example="http://localhost:8000/storage/user-icon.png"
-     *         ),
-     *         @OA\Property(
-     *           property="name",
-     *           type="string",
-     *           example="John Doe"
-     *         ),
-     *       ),
-     *     ),
+     *     @OA\JsonContent(ref="#/components/schemas/UserResource")
      *   )
      * )
      */
     public function me() {
         $loggedUser = AuthHelper::getLoggedUser();
         return new UserResource($loggedUser);
+    }
+
+
+    /**
+     * @OA\Put(
+     *   path="/api/users/me",
+     *   tags={"User"},
+     *   summary="Update current user",
+     *   description="Update current user",
+     *   security={{"bearerAuth":{}}},
+     *   @OA\RequestBody(
+     *     @OA\JsonContent(
+     *       @OA\Property(
+     *         property="email",
+     *         type="string",
+     *         example="test@test.com"
+     *       ),
+     *       @OA\Property(
+     *         property="current_password",
+     *         type="string",
+     *         example="11111111"
+     *       ),
+     *      @OA\Property(
+     *        property="new_password",
+     *        type="string",
+     *        example="22222222"
+     *      ),
+     *      @OA\Property(
+     *        property="name",
+     *        type="string",
+     *        example="test"
+     *       ),
+     *       @OA\Property(
+     *         property="tel",
+     *         type="string",
+     *         example="090-1111-2222"
+     *       ),
+     *       @OA\Property(
+     *         property="company",
+     *         type="string",
+     *         example="test company"
+     *       )
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *   )
+     * )
+     * 
+     */
+    public function update(UpdateRequest $request, UpdateAction $action) {
+        $data = $request->only('email', 'new_password', 'name', 'tel', 'company');
+        $action($data);
     }
 }

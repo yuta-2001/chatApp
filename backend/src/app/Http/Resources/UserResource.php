@@ -6,11 +6,42 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\File;
 
+/**
+ * @mixin \App\Models\User
+ *
+ * @OA\Schema()
+ **/
 class UserResource extends JsonResource
 {
     public static $wrap = null;
 
     /**
+     * @OA/Property(
+     *   property="icon",
+     *   type="string",
+     *   example="http://localhost:8000/storage/user-icon.png"
+     * )
+     * @OA/Property(
+     *   property="name",
+     *   type="string",
+     *   example="John Doe"
+     * )
+     * @OA/Property(
+     *   property="email",
+     *   type="string",
+     *   example="test@test.com"
+     * )
+     * @OA/Property(
+     *   property="tel",
+     *   type="string",
+     *   example="1234567890"
+     * )
+     * @OA/Property(
+     *   property="company",
+     *   type="string",
+     *   example="ABC Company"
+     * )
+     * 
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
@@ -26,7 +57,7 @@ class UserResource extends JsonResource
             'icon' => asset('storage/' . $this->icon),
             'name' => $this->name,
             'email' => $this->email,
-            'phone' => $this->phone,
+            'tel' => $this->tel,
             'company' => $this->company,
         ];
     }

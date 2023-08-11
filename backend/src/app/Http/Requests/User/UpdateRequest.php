@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests\User;
 
+use App\Rules\CheckCurrentPasswordRule;
 use App\Http\Requests\ApiRequest;
 
-class LoginRequest extends ApiRequest
+class UpdateRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +23,12 @@ class LoginRequest extends ApiRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email', 'exists:users'],
-            'password' => ['required']
+            'email' => ['required', 'email', 'unique:users,email,' . auth()->id()],
+            'current_password' => ['required_with:new_password', new CheckCurrentPasswordRule()],
+            'new_password' => ['required_with:current_password'],
+            'name' => ['required', 'min:3', 'max:255'],
+            'tel' => ['string', 'max:255'],
+            'company' => ['string', 'max:255'],
         ];
     }
 }
