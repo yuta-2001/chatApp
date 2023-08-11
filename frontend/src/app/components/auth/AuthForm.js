@@ -5,7 +5,7 @@ import axios from '../../../libs/axios'
 import { setTokenToLocalStorage } from '../../../utils/handle-authorization-header'
 import FormBtn from './FormBtn'
 import FormInput from './FromInput'
-import FormImage from '../Image/FormImage'
+import FormImage from '../image/FormImage'
 
 export default function AuthForm({ isRegister }) {
   const [icon, setIcon] = useState('')
