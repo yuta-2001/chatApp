@@ -25,6 +25,9 @@ class UserResource extends JsonResource
         return [
             'icon' => asset('storage/' . $this->icon),
             'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'company' => $this->company,
         ];
     }
 }
