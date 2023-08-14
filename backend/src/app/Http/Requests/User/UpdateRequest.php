@@ -24,8 +24,8 @@ class UpdateRequest extends ApiRequest
     {
         return [
             'email' => ['required', 'email', 'unique:users,email,' . auth()->id()],
-            'current_password' => ['required_with:new_password', new CheckCurrentPasswordRule()],
-            'new_password' => ['required_with:current_password'],
+            'current_password' => ['sometimes'],
+            'new_password' => ['sometimes'],
             'name' => ['required', 'min:3', 'max:255'],
             'tel' => ['string', 'max:255'],
             'company' => ['string', 'max:255'],

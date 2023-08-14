@@ -1,11 +1,11 @@
 'use client'
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, memo } from "react"
 import Avatar from "react-avatar"
 import { IconEditor } from "./IconEditor"
 import styles from '../../../styles/FormImage.module.scss';
 import Image from 'next/image';
 
-export default function FormImage({ icon, handleChangeIcon }) {
+const FormImage = memo(({ icon, handleChangeIcon }) => {
   const [previewIcon, setPreviewIcon] = useState('')
   const iconInputRef = useRef(null)
 
@@ -27,7 +27,7 @@ export default function FormImage({ icon, handleChangeIcon }) {
         round
         color='#ddd'
         alt='アイコン'
-        src={icon ? URL.createObjectURL(icon) : null}
+        src={/^http?:/.test(icon) ? icon : (icon ? URL.createObjectURL(icon) : null)}
       />
       <button
         className={styles.avatarEdit}
@@ -55,4 +55,6 @@ export default function FormImage({ icon, handleChangeIcon }) {
       />
     </div>
   )
-}
+})
+
+export default FormImage
