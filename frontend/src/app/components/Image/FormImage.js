@@ -21,39 +21,42 @@ const FormImage = memo(({ icon, handleChangeIcon }) => {
   },[]);
 
   return (
-    <div className={styles.avatar}>
-      <Avatar
-        size='160'
-        round
-        color='#ddd'
-        alt='アイコン'
-        src={/^http?:/.test(icon) ? icon : (icon ? URL.createObjectURL(icon) : null)}
-      />
-      <button
-        className={styles.avatarEdit}
-        type="button"
-        onClick={handleClickChangeIcon}
-      >
-        <Image
-          src="/imageEdit.svg"
-          width={40}
-          height={30}
-          alt="アイコン編集"
+    <>
+      <div className={styles.avatar}>
+        <Avatar
+          size='160'
+          round
+          color='#ddd'
+          alt='アイコン'
+          src={/^http?:/.test(icon) ? icon : (icon ? URL.createObjectURL(icon) : null)}
         />
-      </button>
-      <input
-        type="file"
-        accept="image/*"
-        style={{ display: 'none' }}
-        ref={iconInputRef}
-        onChange={handleChangePreviewIcon}
-      />
-      <IconEditor
-        previewIcon={previewIcon}
-        onChangePreviewIcon={setPreviewIcon}
-        onChangeIcon={handleChangeIcon}
-      />
-    </div>
+        <button
+          className={styles.avatarEdit}
+          type="button"
+          onClick={handleClickChangeIcon}
+        >
+          <Image
+            src="/imageEdit.svg"
+            width={40}
+            height={30}
+            alt="アイコン編集"
+          />
+        </button>
+        <input
+          name="icon"
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          ref={iconInputRef}
+          onChange={handleChangePreviewIcon}
+        />
+        <IconEditor
+          previewIcon={previewIcon}
+          onChangePreviewIcon={setPreviewIcon}
+          onChangeIcon={handleChangeIcon}
+        />
+      </div>
+    </>
   )
 })
 

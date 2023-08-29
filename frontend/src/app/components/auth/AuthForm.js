@@ -1,6 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useState, useCallback } from 'react'
+import { useForm } from 'react-hook-form'
 import axios from '../../../libs/axios'
 import { setTokenToLocalStorage } from '../../../utils/handle-authorization-header'
 import FormBtn from './FormBtn'
@@ -10,49 +11,38 @@ import { useUserUpdate } from '../../../contexts/UserProvider'
 import { userInfoToLocalStorage } from '../../../utils/handle-user-setting'
 
 export default function AuthForm({ isRegister }) {
+  const { 
+    register, 
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm({})
   const [icon, setIcon] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
   const router = useRouter()
   const setUser = useUserUpdate()
 
   const handleChangeIcon = useCallback((nextIcon) => {
     setIcon(nextIcon);
+    setValue('icon', nextIcon);
   },[]);
 
-  const handleNameChange = useCallback((e) => {
-    setName(e.target.value)
-  }, [])
-
-  const handleEmailChange = useCallback((e) => {
-    setEmail(e.target.value)
-  }, [])
-
-  const handlePasswordChange = useCallback((e) => {
-    setPassword(e.target.value)
-  }, [])
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const onSubmit = async (data) => {
     if (isRegister) {
       const formData = new FormData();
-      formData.append('icon', icon);
-      formData.append('name', name);
-      formData.append('email', email);
-      formData.append('password', password);
+      formData.append('icon', data.icon);
+      formData.append('name', data.name);
+      formData.append('email', data.email);
+      formData.append('password', data.password);
       const res = await axios.post('/api/register', formData)
       if (res.status === 200) {
         router.push('/login')
-      } else if (res.status === 419) {
-        createCsrfCookie()
       } else {
         alert('Register failed')
       }
     } else {
       const res = await axios.post('/api/login', { 
-        'email' : email,
-        'password' : password
+        'email' : data.email,
+        'password' : data.password
       })
       if (res.status === 200) {
         setTokenToLocalStorage(res.data.token_type, res.data.access_token)
@@ -68,15 +58,42 @@ export default function AuthForm({ isRegister }) {
 
   return (
     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-      <form className="space-y-6" onSubmit={handleSubmit}>
+      <form
+        className="space-y-6" 
+        onSubmit={handleSubmit(onSubmit)}
+      >
         {isRegister && (
           <>
-            <FormImage icon={icon} handleChangeIcon={handleChangeIcon} />
-            <FormInput fieldName='name' type='text' value={name} onChange={handleNameChange} required />
+            <FormImage
+              icon={icon}
+              handleChangeIcon={handleChangeIcon}
+            />
+            <FormInput
+              fieldName='name'
+              type='text'
+              register={...register('name', {
+                required: 'Name is required',
+              })}
+              error={errors.name && errors.name.message}
+            />
           </>
         )}
-        <FormInput fieldName='email' type='email' value={email} onChange={handleEmailChange} required />
-        <FormInput fieldName='password' type='password' value={password} onChange={handlePasswordChange} required />
+        <FormInput
+          fieldName='email' 
+          type='email' 
+          register={...register('email', {
+            required: 'Email is required',
+          })}
+          error={errors.email && errors.email.message}
+        />
+        <FormInput
+          fieldName='password'
+          type='password'
+          register={...register('password', {
+            required: 'Password is required',
+          })}
+          error={errors.password && errors.password.message}
+        />
         <FormBtn isRegister={isRegister} />
       </form>
     </div>
