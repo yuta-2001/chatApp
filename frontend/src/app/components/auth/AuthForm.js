@@ -6,6 +6,8 @@ import { setTokenToLocalStorage } from '../../../utils/handle-authorization-head
 import FormBtn from './FormBtn'
 import FormInput from './FromInput'
 import FormImage from '../image/FormImage'
+import { useUserUpdate } from '../../../contexts/UserProvider'
+import { userInfoToLocalStorage } from '../../../utils/handle-user-setting'
 
 export default function AuthForm({ isRegister }) {
   const [icon, setIcon] = useState('')
@@ -13,10 +15,11 @@ export default function AuthForm({ isRegister }) {
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const router = useRouter()
+  const setUser = useUserUpdate()
 
   const handleChangeIcon = useCallback((nextIcon) => {
     setIcon(nextIcon);
-},[]);
+  },[]);
 
   const handleNameChange = useCallback((e) => {
     setName(e.target.value)
@@ -53,9 +56,10 @@ export default function AuthForm({ isRegister }) {
       })
       if (res.status === 200) {
         setTokenToLocalStorage(res.data.token_type, res.data.access_token)
-        router.push('/dashboard/setting')
-      } else if (res.status === 419) {
-        createCsrfCookie()
+        const user = await axios.get('/api/users/me')
+        userInfoToLocalStorage(user.data)
+        setUser(user.data)
+        router.push('/dashboard')
       } else {
         alert('Login failed')
       }

@@ -1,5 +1,4 @@
 'use client'
-import { useEffect, useState } from 'react'
 import { FiLogOut } from 'react-icons/fi'
 import { BsFillChatDotsFill } from 'react-icons/bs'
 import { RxDashboard } from 'react-icons/rx'
@@ -8,25 +7,11 @@ import { AiFillSetting } from 'react-icons/ai'
 import { BsFillTrash3Fill } from 'react-icons/bs'
 import { useRouter } from 'next/navigation'
 import NavItem from './NavItem'
-import axios from '../../../libs/axios'
+import { useUser } from '../../../contexts/UserProvider'
 import { removeTokenFromLocalStorage } from '../../../utils/handle-authorization-header'
 
 export default function NavBar() {
-  const [user, setUser] = useState({})
-
-  async function getUserData () {
-    await axios.get('/api/users/me')
-    .then(res => {
-      setUser(res.data)
-    })
-    .catch(err => {
-      console.log(err)
-    })
-  }
-
-  useEffect(() => {
-    getUserData()
-  }, [])
+  const user = useUser()
 
   const router = useRouter()
   const handleLogOut = async (e) => {

@@ -1,37 +1,24 @@
 "use client"
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import FormBtn from './FormBtn'
 import FormInput from './FormInput'
 import FormImage from '../image/FormImage'
 import axios from '../../../libs/axios'
 
+import { useUser, useUserUpdate } from '../../../contexts/UserProvider'
+import { userInfoToLocalStorage } from '../../../utils/handle-user-setting'
+
 export default function Form() {
-  const [userName, setUserName] = useState('')
-  const [userIcon, setUserIcon] = useState('')
-  const [userEmail, setUserEmail] = useState('')
+  const user = useUser()
+  const setUser = useUserUpdate()
+  const [userName, setUserName] = useState(user.name)
+  const [userIcon, setUserIcon] = useState(user.icon)
+  const [userEmail, setUserEmail] = useState(user.email)
   const [userCurrentPassword, setUserCurrentPassword] = useState('')
   const [userNewPassword, setUserNewPassword] = useState('')
-  const [userTel, setUserTel] = useState('')
-  const [userCompany, setUserCompany] = useState('')
-
-  async function getUserData () {
-    await axios.get('/api/users/me')
-    .then(res => {
-      setUserName(res.data.name)
-      setUserIcon(res.data.icon)
-      setUserEmail(res.data.email)
-      setUserTel(res.data.tel)
-      setUserCompany(res.data.company)  
-    })
-    .catch(err => {
-      console.log(err)
-    })
-  }
-
-  useEffect(() => {
-    getUserData()
-  }, [])
+  const [userTel, setUserTel] = useState(user.tel)
+  const [userCompany, setUserCompany] = useState(user.company)
 
   const router = useRouter()
 
@@ -47,6 +34,9 @@ export default function Form() {
     }
     const res = await axios.put('/api/users/me', user)
     if (res.status === 200) {
+      const user = await axios.get('/api/users/me')
+      userInfoToLocalStorage(user.data)
+      setUser(user.data)
       router.push('/dashboard')
     }
     if (res.status !== 200) {
