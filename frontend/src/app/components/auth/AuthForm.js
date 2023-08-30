@@ -1,7 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useState, useCallback } from 'react'
-import { useForm } from 'react-hook-form'
+import { set, useForm } from 'react-hook-form'
 import axios from '../../../libs/axios'
 import { setTokenToLocalStorage } from '../../../utils/handle-authorization-header'
 import FormBtn from './FormBtn'
@@ -9,6 +9,7 @@ import FormInput from './FromInput'
 import FormImage from '../image/FormImage'
 import { useUserUpdate } from '../../../contexts/UserProvider'
 import { userInfoToLocalStorage } from '../../../utils/handle-user-setting'
+import { useToastUpdate } from '../../../contexts/ToastProvider'
 
 export default function AuthForm({ isRegister }) {
   const { 
@@ -20,39 +21,61 @@ export default function AuthForm({ isRegister }) {
   const [icon, setIcon] = useState('')
   const router = useRouter()
   const setUser = useUserUpdate()
+  const setToast = useToastUpdate()
 
   const handleChangeIcon = useCallback((nextIcon) => {
     setIcon(nextIcon);
     setValue('icon', nextIcon);
   },[]);
 
-  const onSubmit = async (data) => {
+  const handleErrorResponse = (response) => {
+    if (response.status === 422) {
+      let message = '';
+      for (const [key, value] of Object.entries(response.data.errors)) {
+        message += `${key}: ${value[0]} \n`;
+      }
+      setToast({
+          type: 'error',
+          message: message,
+      });
+    } else {
+      setToast({
+          type: 'error',
+          message: 'Something went wrong',
+      });
+    }
+  }
+
+  const onSubmit = (data) => {
     if (isRegister) {
       const formData = new FormData();
       formData.append('icon', data.icon);
       formData.append('name', data.name);
       formData.append('email', data.email);
       formData.append('password', data.password);
-      const res = await axios.post('/api/register', formData)
-      if (res.status === 200) {
-        router.push('/login')
-      } else {
-        alert('Register failed')
-      }
+      axios.post('/api/register', formData)
+        .then((res) => {
+          router.push('/login')
+        })
+        .catch((err) => {
+          handleErrorResponse(err.response);
+        })
     } else {
-      const res = await axios.post('/api/login', { 
+      axios.post('/api/login', {
         'email' : data.email,
         'password' : data.password
-      })
-      if (res.status === 200) {
+      }).then((res) => {
         setTokenToLocalStorage(res.data.token_type, res.data.access_token)
-        const user = await axios.get('/api/users/me')
-        userInfoToLocalStorage(user.data)
-        setUser(user.data)
-        router.push('/dashboard')
-      } else {
-        alert('Login failed')
-      }
+        axios.get('/api/users/me').then((res) => {
+          userInfoToLocalStorage(res.data)
+          setUser(res.data)
+          router.push('/dashboard')
+        }).catch((err) => {
+          handleErrorResponse(err.response);
+        })
+      }).catch((err) => {
+        handleErrorResponse(err.response);
+      })
     }
   }
 
