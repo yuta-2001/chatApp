@@ -81,6 +81,6 @@ class UserController extends Controller
      */
     public function update(UpdateRequest $request, UpdateAction $action) {
         $data = $request->only('email', 'new_password', 'name', 'tel', 'company');
-        $action($data);
+        $action($request->file('icon'), $data);
     }
 }

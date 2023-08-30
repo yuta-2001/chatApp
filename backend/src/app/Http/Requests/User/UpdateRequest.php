@@ -23,12 +23,13 @@ class UpdateRequest extends ApiRequest
     public function rules(): array
     {
         return [
+            'icon' => ['nullable', 'image', 'max:2048', 'mimes:jpeg,png,jpg,gif'],
             'email' => ['required', 'email', 'unique:users,email,' . auth()->id()],
             'current_password' => ['sometimes'],
             'new_password' => ['sometimes'],
-            'name' => ['required', 'min:3', 'max:255'],
-            'tel' => ['string', 'max:255'],
-            'company' => ['string', 'max:255'],
+            'name' => ['required'],
+            'tel' => ['nullable', 'max:255'],
+            'company' => ['nullable', 'max:255'],
         ];
     }
 }
