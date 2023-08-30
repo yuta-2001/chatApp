@@ -6,14 +6,17 @@ import FormBtn from './FormBtn'
 import FormInput from './FormInput'
 import FormImage from '../image/FormImage'
 import axios from '../../../libs/axios'
+import { useToastUpdate } from '../../../contexts/ToastProvider'
 
 import { useUser, useUserUpdate } from '../../../contexts/UserProvider'
 import { userInfoToLocalStorage } from '../../../utils/handle-user-setting'
+import { handleErrorResponse } from '../../../utils/handle-error-response'
 
 export default function Form() {
   const user = useUser()
   const setUser = useUserUpdate()
   const [userIcon, setUserIcon] = useState(user.icon)
+  const router = useRouter()
 
   const {
     register,
@@ -32,12 +35,18 @@ export default function Form() {
     },
   })
 
+  const clearUpdatePassword = useCallback(() => {
+    setValue('current_password', '')
+    setValue('new_password', '')
+    setValue('password_confirm', '')
+  }, [])
+
   const handleChangeIcon = useCallback((icon) => {
     setUserIcon(icon)
     setValue('icon', icon)
   }, [])
 
-  const router = useRouter()
+  const setToast = useToastUpdate()
   async function onSubmit(data) {
     const formData = new FormData();
     if (data.icon !== undefined) {
@@ -53,17 +62,27 @@ export default function Form() {
     formData.append('company', data.company);
     formData.append('_method', 'put');
 
-    const res = await axios.post('/api/users/me', formData)
-    if (res.status === 200) {
-      const user = await axios.get('/api/users/me')
-      userInfoToLocalStorage(user.data)
-      setUser(user.data)
-      router.push('/dashboard')
-    }
-    if (res.status !== 200) {
-      console.log(res.status)
-      alert('更新に失敗しました')
-    }
+    axios.post('/api/users/me', formData)
+      .then((res) => {
+        axios.get('/api/users/me')
+          .then((res) => {
+            userInfoToLocalStorage(res.data)
+            setUser(res.data)
+            setToast({
+              type: 'success',
+              message: 'Update user successfully',
+            });
+            clearUpdatePassword()
+          })
+          .catch((err) => {
+            handleErrorResponse(err.response, setToast, router);
+            clearUpdatePassword()
+          })
+      })
+      .catch((err) => {
+        handleErrorResponse(err.response, setToast, router);
+        clearUpdatePassword()
+      })
   }
 
   return (

@@ -25,7 +25,7 @@ class UpdateRequest extends ApiRequest
         return [
             'icon' => ['nullable', 'image', 'max:2048', 'mimes:jpeg,png,jpg,gif'],
             'email' => ['required', 'email', 'unique:users,email,' . auth()->id()],
-            'current_password' => ['sometimes'],
+            'current_password' => ['sometimes', new CheckCurrentPasswordRule()],
             'new_password' => ['sometimes'],
             'name' => ['required'],
             'tel' => ['nullable', 'max:255'],

@@ -1,9 +1,10 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import { useState, useCallback } from 'react'
-import { set, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import axios from '../../../libs/axios'
 import { setTokenToLocalStorage } from '../../../utils/handle-authorization-header'
+import { handleErrorResponse } from '../../../utils/handle-error-response'
 import FormBtn from './FormBtn'
 import FormInput from './FromInput'
 import FormImage from '../image/FormImage'
@@ -21,31 +22,13 @@ export default function AuthForm({ isRegister }) {
   const [icon, setIcon] = useState('')
   const router = useRouter()
   const setUser = useUserUpdate()
-  const setToast = useToastUpdate()
 
   const handleChangeIcon = useCallback((nextIcon) => {
     setIcon(nextIcon);
     setValue('icon', nextIcon);
   },[]);
 
-  const handleErrorResponse = (response) => {
-    if (response.status === 422) {
-      let message = '';
-      for (const [key, value] of Object.entries(response.data.errors)) {
-        message += `${key}: ${value[0]} \n`;
-      }
-      setToast({
-          type: 'error',
-          message: message,
-      });
-    } else {
-      setToast({
-          type: 'error',
-          message: 'Something went wrong',
-      });
-    }
-  }
-
+  const setToast = useToastUpdate();
   const onSubmit = (data) => {
     if (isRegister) {
       const formData = new FormData();
@@ -58,7 +41,7 @@ export default function AuthForm({ isRegister }) {
           router.push('/login')
         })
         .catch((err) => {
-          handleErrorResponse(err.response);
+          handleErrorResponse(err.response, setToast);
         })
     } else {
       axios.post('/api/login', {
@@ -71,10 +54,10 @@ export default function AuthForm({ isRegister }) {
           setUser(res.data)
           router.push('/dashboard')
         }).catch((err) => {
-          handleErrorResponse(err.response);
+          handleErrorResponse(err.response, setToast);
         })
       }).catch((err) => {
-        handleErrorResponse(err.response);
+        handleErrorResponse(err.response, setToast);
       })
     }
   }
