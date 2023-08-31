@@ -34,6 +34,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         'as' => 'users.',
         'controller' => UserController::class,
     ], function () {
+        Route::get('/', 'index')->name('index');
         Route::get('/me', 'me')->name('me');
         Route::put('/me', 'update')->name('update');
     });

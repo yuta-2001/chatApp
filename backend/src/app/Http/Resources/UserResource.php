@@ -48,17 +48,30 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $path = storage_path('app/public/' . $this->icon);
-        if (!File::exists($path)) {
-            abort(404);
+        $data = [];
+        if (request()->routeIs('users.me')) {
+            $path = storage_path('app/public/' . $this->icon);
+            if (!File::exists($path)) {
+                abort(404);
+            }
+    
+            $data = [
+                'icon' => asset('storage/' . $this->icon),
+                'name' => $this->name,
+                'email' => $this->email,
+                'tel' => $this->tel,
+                'company' => $this->company,
+            ];
         }
 
-        return [
-            'icon' => asset('storage/' . $this->icon),
-            'name' => $this->name,
-            'email' => $this->email,
-            'tel' => $this->tel,
-            'company' => $this->company,
-        ];
+        if (request()->routeIs('users.index')) {
+            $data = [
+                'id' => $this->id,
+                'icon' => asset('storage/' . $this->icon),
+                'name' => $this->name,
+            ];
+        }
+
+        return $data;
     }
 }

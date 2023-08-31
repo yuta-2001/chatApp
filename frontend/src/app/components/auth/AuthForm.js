@@ -49,13 +49,15 @@ export default function AuthForm({ isRegister }) {
         'password' : data.password
       }).then((res) => {
         setTokenToLocalStorage(res.data.token_type, res.data.access_token)
-        axios.get('/api/users/me').then((res) => {
-          userInfoToLocalStorage(res.data)
-          setUser(res.data)
-          router.push('/dashboard')
-        }).catch((err) => {
-          handleErrorResponse(err.response, setToast);
-        })
+      }).then(() => {
+        axios.get('/api/users/me')
+          .then((res) => {
+            userInfoToLocalStorage(res.data);
+            setUser(res.data);
+            router.push('/dashboard');
+          }).catch((err) => {
+            handleErrorResponse(err.response, setToast);
+          })
       }).catch((err) => {
         handleErrorResponse(err.response, setToast);
       })
