@@ -1,11 +1,37 @@
 "use client";
 import { useEffect, useState } from 'react';
+import Modal from 'react-modal';
 import axios from '../../../libs/axios'
 import { handleErrorResponse } from '../../../utils/handle-error-response'
 import { useToastUpdate } from '../../../contexts/ToastProvider'
 
+Modal.setAppElement("body");
+
+const modalStyle = {
+  overlay: {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    backgroundColor: "rgba(0,0,0,0.85)",
+    zIndex: 300
+  },
+  content: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    width: "40%",
+    maxWidth: "40rem",
+    transform: "translate(-50%, -50%)",
+    backgroundColor: "white",
+    borderRadius: "1rem",
+    padding: "1.5rem"
+  }
+};
+
 export default function FriendPage() {
   const [users, setUsers] = useState([]);
+  const [userData, setUserData] = useState({}); 
+  const [modalIsOpen, setIsOpen] = useState(false);
   const setToast = useToastUpdate();
 
   useEffect(() => {
@@ -15,6 +41,24 @@ export default function FriendPage() {
       handleErrorResponse(err.response, setToast);
     })
   }, []);
+
+  const getUserData = (userId) => {
+    axios.get(`/api/friends/${userId}`).then((res) => {
+      setUserData(res.data);
+    }).catch((err) => {
+      handleErrorResponse(err.response, setToast);
+    });
+  };
+
+  const modalOpen = (userId) => {
+    getUserData(userId);
+    setIsOpen(true);
+  }
+
+  const modalClose = () => {
+    setUserData({});
+    setIsOpen(false);
+  }
 
   return (
     <div className="p-4">
@@ -36,7 +80,7 @@ export default function FriendPage() {
                       </p>
                   </div>
                   <div className="inline-flex items-center text-base font-semibold text-gray-900 dark:text-white">
-                    <button onClick={(event) => {}} className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <button onClick={() => modalOpen(user.id)} className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                       show detail
                     </button>
                   </div>
@@ -46,6 +90,16 @@ export default function FriendPage() {
           })
         }
       </ul>
+
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={modalClose}
+        style={modalStyle}
+      >
+        <div>
+
+        </div>
+      </Modal>
     </div>
   )
 }
