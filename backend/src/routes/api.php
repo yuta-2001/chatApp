@@ -42,9 +42,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::group([
         'prefix' => 'friend-requests',
-        'as' => 'friend-request.',
+        'as' => 'friendRequest.',
         'controller' => FriendRequestController::class,
     ], function () {
+        Route::get('/received-list', 'receivedList')->name('receivedList');
         Route::post('/', 'store')->name('store');
     });
 });
