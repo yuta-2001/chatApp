@@ -47,5 +47,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     ], function () {
         Route::get('/received-list', 'receivedList')->name('receivedList');
         Route::post('/', 'store')->name('store');
+        Route::put('/', 'update')->name('update');
     });
 });
