@@ -28,7 +28,7 @@ class FriendRequestController extends Controller
      *   )
      * )
      */
-    public function receivedList(ReceivedListAction $action)
+    public function receivedList(ReceivedListAction $action): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         return UserResource::collection($action());
     }

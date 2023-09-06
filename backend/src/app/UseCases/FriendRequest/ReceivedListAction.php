@@ -7,7 +7,7 @@ use App\Models\FriendRequest;
 
 class ReceivedListAction
 {
-    public function __invoke()
+    public function __invoke(): \Illuminate\Database\Eloquent\Collection
     {
         $requests =  FriendRequest::with('requester')
             ->where('requested_id', AuthHelper::getLoggedUser()->id)
