@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\User\AuthController;
+use App\Http\Controllers\User\FriendRequestController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -31,11 +32,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::group([
         'prefix' => 'users',
-        'as' => 'users.',
+        'as' => 'user.',
         'controller' => UserController::class,
     ], function () {
         Route::get('/', 'index')->name('index');
         Route::get('/me', 'me')->name('me');
         Route::put('/me', 'update')->name('update');
+    });
+
+    Route::group([
+        'prefix' => 'friend-requests',
+        'as' => 'friend-request.',
+        'controller' => FriendRequestController::class,
+    ], function () {
+        Route::post('/', 'store')->name('store');
     });
 });
