@@ -1,5 +1,5 @@
 "use client"
-import { useForm } from 'react-hook-form'
+import { set, useForm } from 'react-hook-form'
 import { useState } from 'react'
 import axios from '../../../libs/axios'
 import { handleErrorResponse } from '../../../utils/handle-error-response'
@@ -11,6 +11,7 @@ export default function SearchPage() {
   const {
     register, 
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({})
 
@@ -36,10 +37,24 @@ export default function SearchPage() {
 
   const handleRequestSubmit = (e) => {
     e.preventDefault();
+    axios.post('/api/friend-requests', {
+      requested_id: user.id,
+    }).then((res) => {
+      setToast({
+        type: 'success',
+        message: 'Request sent.',
+      })
+      setUser('');
+      setValue('email', '');
+    }).catch((err) => {
+      handleErrorResponse(err.response, setToast);
+    })
   }
 
   const handleCancel = (e) => {
     e.preventDefault();
+    setUser('');
+    setValue('email', '');
   }
 
 
@@ -76,7 +91,7 @@ export default function SearchPage() {
               <div className="flex justify-center">
                 <form onSubmit={handleRequestSubmit}>
                   <button type="submit" className="inline-flex text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg">Reqeust</button>
-                  <button type="button" className="ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none hover:bg-gray-200 rounded text-lg">Cancel</button>
+                  <button onClick={handleCancel} type="button" className="ml-4 inline-flex text-gray-700 bg-gray-100 border-0 py-2 px-6 focus:outline-none hover:bg-gray-200 rounded text-lg">Cancel</button>
                 </form>
               </div>
             </div>
