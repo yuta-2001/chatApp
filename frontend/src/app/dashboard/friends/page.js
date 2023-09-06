@@ -20,7 +20,7 @@ const modalStyle = {
     top: "50%",
     left: "50%",
     width: "40%",
-    maxWidth: "40rem",
+    maxWidth: "20rem",
     transform: "translate(-50%, -50%)",
     backgroundColor: "white",
     borderRadius: "1rem",
@@ -96,8 +96,27 @@ export default function FriendPage() {
         onRequestClose={modalClose}
         style={modalStyle}
       >
-        <div>
-
+        <div className="flex flex-col items-center justify-center">
+          <div className="mb-6">
+            <img className="w-28 h-28 mb-2 rounded-full" src={userData.icon} alt="Neil image" />
+            <p className="text-sm font-medium text-gray-900 truncate dark:text-white text-center">
+              {userData.name}
+            </p>
+          </div>
+          <div className="mb-4">
+            <p className="text-sm mb-2 text-gray-500 truncate dark:text-gray-400">
+              email: {userData.email || 'not registered'}
+            </p>
+            <p className="text-sm mb-2 text-gray-500 truncate dark:text-gray-400">
+              tel: {userData.tel || 'not registered'}
+            </p>
+            <p className="text-sm mb-2 text-gray-500 truncate dark:text-gray-400">
+              company: {userData.company || 'not registered'}
+            </p>
+          </div>
+          <button className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-full shadow-sm text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            visit talk room
+          </button>
         </div>
       </Modal>
     </div>
