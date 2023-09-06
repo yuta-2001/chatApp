@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Helpers\AuthHelper;
+use App\Models\FriendRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\File;
@@ -69,6 +71,9 @@ class UserResource extends JsonResource
                 'id' => $this->id,
                 'icon' => asset('storage/' . $this->icon),
                 'name' => $this->name,
+                'is_requested' => FriendRequest::where('requested_id', $this->id)
+                    ->where('requester_id', AuthHelper::getLoggedUser()->id)
+                    ->exists(),
             ];
         }
 
