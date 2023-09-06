@@ -1,5 +1,7 @@
 'use client'
 import { FiLogOut } from 'react-icons/fi'
+import { MdOutlineMobileFriendly } from 'react-icons/md'
+import { BsSearch } from 'react-icons/bs'
 import { BsFillChatDotsFill } from 'react-icons/bs'
 import { RxDashboard } from 'react-icons/rx'
 import { FaUserFriends } from 'react-icons/fa'
@@ -10,10 +12,11 @@ import NavItem from './NavItem'
 import { useUser } from '../../../contexts/UserProvider'
 import { removeTokenFromLocalStorage } from '../../../utils/handle-authorization-header'
 
+
 export default function NavBar() {
   const user = useUser()
-
   const router = useRouter()
+
   const handleLogOut = async (e) => {
     e.preventDefault()
     const res = await axios.post('/api/logout')
@@ -58,6 +61,20 @@ export default function NavBar() {
       icon: BsFillChatDotsFill,
       label: 'Messages',
       isButton: false,
+      onClick: null
+    },
+    {
+      href: '/dashboard/search',
+      icon: BsSearch,
+      label: 'Search Friends',
+      inButton: false,
+      onClick: null
+    },
+    {
+      href: '/dashboard/requests',
+      icon: MdOutlineMobileFriendly,
+      label: 'Friend Requests',
+      inButton: false,
       onClick: null
     },
     {

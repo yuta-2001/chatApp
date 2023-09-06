@@ -7,9 +7,45 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UpdateRequest;
 use App\Http\Resources\UserResource;
 use App\UseCases\User\UpdateAction;
+use App\UseCases\User\IndexAction;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    /**
+     * @OA\Get(
+     *   path="/api/users",
+     *   tags={"User"},
+     *   summary="search user",
+     *   description="search user",
+     *   security={{"bearerAuth":{}}},
+     *   @OA\Parameter(
+     *     name="email",
+     *     in="query",
+     *     description="email",
+     *     required=true,
+     *     @OA\Schema(
+     *       type="string"
+     *     )
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="OK",
+     *     @OA\JsonContent(ref="#/components/schemas/UserResource")
+     *   )
+     * )
+     */
+    public function index(Request $request, IndexAction $action): ?UserResource
+    {
+        $email = $request->query('email');
+        $user = $action($email);
+        if (!$user) {
+            return null;
+        }
+
+        return new UserResource($action($email));
+    }
+
     /**
      * @OA\Get(
      *   path="/api/users/me",
