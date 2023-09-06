@@ -86,6 +86,17 @@ class UserResource extends JsonResource
             ];
         }
 
+        if (request()->routeIs('friend.show')) {
+            $data = [
+                'id' => $this->id,
+                'icon' => asset('storage/' . $this->icon),
+                'name' => $this->name,
+                'email' => $this->email,
+                'tel' => $this->tel,
+                'company' => $this->company,
+            ];
+        }
+
         return $data;
     }
 }
