@@ -77,7 +77,7 @@ class UserResource extends JsonResource
             ];
         }
 
-        if (request()->routeIs('friendRequest.receivedList')) {
+        if (request()->routeIs('friendRequest.receivedList') || request()->routeIs('friend.index')) {
             $data = [
                 'id' => $this->id,
                 'icon' => asset('storage/' . $this->icon),

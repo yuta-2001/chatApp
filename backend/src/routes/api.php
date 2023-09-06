@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\User\AuthController;
+use App\Http\Controllers\User\FriendController;
 use App\Http\Controllers\User\FriendRequestController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
@@ -48,5 +49,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/received-list', 'receivedList')->name('receivedList');
         Route::post('/', 'store')->name('store');
         Route::put('/', 'update')->name('update');
+    });
+
+    Route::group([
+        'prefix' => 'friends',
+        'as' => 'friend.',
+        'controller' => FriendController::class,
+    ], function () {
+        Route::get('/', 'index')->name('index');
     });
 });
