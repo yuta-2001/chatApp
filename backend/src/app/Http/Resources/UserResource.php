@@ -49,7 +49,7 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         $data = [];
-        if (request()->routeIs('users.me')) {
+        if (request()->routeIs('user.me')) {
             $path = storage_path('app/public/' . $this->icon);
             if (!File::exists($path)) {
                 abort(404);
@@ -64,7 +64,7 @@ class UserResource extends JsonResource
             ];
         }
 
-        if (request()->routeIs('users.index')) {
+        if (request()->routeIs('user.index')) {
             $data = [
                 'id' => $this->id,
                 'icon' => asset('storage/' . $this->icon),
