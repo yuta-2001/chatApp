@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\User\AuthController;
+use App\Http\Controllers\User\ChatController;
 use App\Http\Controllers\User\FriendController;
 use App\Http\Controllers\User\FriendRequestController;
 use App\Http\Controllers\User\UserController;
@@ -59,4 +60,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{id}', 'show')->name('show');
     });
+
+    Route::group([
+        'prefix' => 'chats',
+        'as' => 'chat.',
+        'controller' => ChatController::class,
+    ], function () {
+        Route::post('/message', 'message')->name('message');
+    });
 });
+
