@@ -16,7 +16,7 @@ class IndexAction
                 'id' => $room->id,
                 'other_user' => [
                     'id' => $otherUser->id,
-                    'icon' => $otherUser->icon,
+                    'icon' => asset('storage/' . $otherUser->icon),
                     'name' => $otherUser->name,
                     'email' => $otherUser->email,
                 ],
