@@ -5,6 +5,7 @@ use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\User\ChatController;
 use App\Http\Controllers\User\FriendController;
 use App\Http\Controllers\User\FriendRequestController;
+use App\Http\Controllers\User\RoomController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -59,6 +60,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     ], function () {
         Route::get('/', 'index')->name('index');
         Route::get('/{id}', 'show')->name('show');
+    });
+
+    Route::group([
+        'prefix' => 'rooms',
+        'as' => 'room.',
+        'controller' => RoomController::class,
+    ], function() {
+        Route::get('/', 'index')->name('index');
     });
 
     Route::group([

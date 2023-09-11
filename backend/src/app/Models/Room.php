@@ -5,19 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Message extends Model
+class Room extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    public function room()
+    public function users()
     {
-        return $this->belongsTo(Room::class);
+        return $this->belongsToMany(User::class);
     }
 
-    public function user()
+    public function messages()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->hasMany(Message::class);
     }
 }
