@@ -68,6 +68,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         'controller' => RoomController::class,
     ], function() {
         Route::get('/', 'index')->name('index');
+        Route::get('/{id}', 'show')->name('show');
     });
 
     Route::group([
