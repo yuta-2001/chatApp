@@ -76,7 +76,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         'as' => 'chat.',
         'controller' => ChatController::class,
     ], function () {
-        Route::post('/message', 'message')->name('message');
+        Route::post('/', 'sendMessage')->name('sendMessage');
     });
 });
 
