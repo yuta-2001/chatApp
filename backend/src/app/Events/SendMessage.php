@@ -13,24 +13,25 @@ class SendMessage implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    // for use in chat via puhser, we need to make a public property under camel case
     public $id;
-    public $roomId;
+    protected $roomId;
     public $content;
-    public $userId;
+    public $user_id;
+    public $created_at;
 
     public function __construct(Message $message)
     {
         $this->id = $message->id;
         $this->roomId = $message->room_id;
-        $this->userId = $message->user_id;
+        $this->user_id = $message->user_id;
         $this->content = $message->content;
+        $this->created_at = $message->created_at;
     }
 
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel('chat'),
-        ];
+        return ['chat-' . $this->roomId];
     }
 
     public function broadcastAs(): string
