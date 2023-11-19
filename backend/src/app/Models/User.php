@@ -21,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'tel',
+        'icon',
+        'company'
     ];
 
     /**
@@ -42,4 +45,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function friendsAsFirstUser()
+    {
+        return $this->belongsToMany(User::class, 'friendships', 'user_id_1', 'user_id_2');
+    }
+
+    public function friendsAsSecondUser()
+    {
+        return $this->belongsToMany(User::class, 'friendships', 'user_id_2', 'user_id_1');
+    }
+
+    public function getFriendsAttribute()
+    {
+        if (!array_key_exists('friends', $this->relations)) {
+            $friends = $this->friendsAsFirstUser->merge($this->friendsAsSecondUser);
+            $this->setRelation('friends', $friends);
+        }
+
+        return $this->getRelation('friends');
+    }
 }

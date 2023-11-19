@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\User;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\ApiRequest;
 
-class RegisterRequest extends FormRequest
+class RegisterRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,8 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required'],
+            'icon' => ['required', 'image', 'max:2048', 'mimes:jpeg,png,jpg,gif'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'unique:users'],
             'password' => ['required'],
         ];

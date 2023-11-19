@@ -185,6 +185,7 @@ return [
         // 'Example' => App\Facades\Example::class,
         'Auth' => Illuminate\Support\Facades\Auth::class,
         'Hash' => Illuminate\Support\Facades\Hash::class,
+        'Storage' => Illuminate\Support\Facades\Storage::class,
     ])->toArray(),
 
 ];
